@@ -1,10 +1,10 @@
-
+import Login_Register from "./pages/Login-Register/Login_Register"
 
 function App() {
 
   return (
-    <main>
-      <h1>hello world</h1>
+    <main className=" h-screen text-white ">
+      <Login_Register />
     </main>
   )
 }

@@ -6,3 +6,7 @@
 *{
   font-family: 'VT323', monospace;
 }
+
+.bgDirtImg{
+  background-image: url("./assets/img/bg/dirt.png");
+}

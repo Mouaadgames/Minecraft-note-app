@@ -3,4 +3,4 @@
 - React 
 - Tailwind css 
 - GraphQL
-- 
+- axios
