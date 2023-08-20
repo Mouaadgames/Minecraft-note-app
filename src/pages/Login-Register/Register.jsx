@@ -39,7 +39,7 @@ function Register({ setLoginScreen, loginScreen }) {
       <div className=" flex items-center flex-col w-fit">
         <h2 className="text-5xl mt-5 mb-3">Sing Up</h2>
         <RegisterForm isSubmitting={submitting} setErr={setErr} err={err} onSubmitHandler={registerHandler} loginScreen={loginScreen} />
-        <span className="text-neutral-400 ">I already have an account - <button tabIndex={-!!loginScreen} onClick={() => { setLoginScreen(true) }} className="text-neutral-200 hover:text-neutral-50 underline-offset-2 underline">Login</button> </span>
+        <span className="text-neutral-400 ">I already have an account - <button tabIndex={-!!loginScreen} onClick={() => { window.history.pushState("", "", "/login"); setLoginScreen(true) }} className="text-neutral-200 hover:text-neutral-50 underline-offset-2 underline">Login</button> </span>
         <OrSeparator />
         <Button tabIndex={-!!loginScreen} text="Use it as a Guest" />
         <span className="text-neutral-400 leading-none mt-1 max-w-[250px] text-center">You will go to a pre-configured environment to discover and play around with the app</span>

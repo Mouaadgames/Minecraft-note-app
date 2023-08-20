@@ -1,10 +1,23 @@
+import { isPropertyAccessOrQualifiedName } from "typescript";
 import HangUpSing from "../../components/hangUpSing"
 import BackShadow from "./BackShadow"
 import Login from "./Login"
 import Register from "./Register";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 function Login_Register() {
   const [loginScreen, setLoginScreen] = useState(true);
+
+  useEffect(() => {
+    if (window.location.pathname === "/login") {
+      setLoginScreen(true)
+    }
+    
+    if (window.location.pathname === "/register") {
+      setLoginScreen(false)
+    }
+    
+  }, []);
+  
   return (
     <div className="bg-repeat relative overflow-hidden bg-[10px] h-screen bgDirtImg z-50">
       <BackShadow />
