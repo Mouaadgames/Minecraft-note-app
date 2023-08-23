@@ -2,13 +2,16 @@ import Button from "../../components/Button"
 import OrSeparator from "./OrSeparator"
 import LoginForm from "./LoginForm"
 import sendFormDataTo from "../../utils/formData";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom"
 
 function Login({ loginScreen, setLoginScreen }) {
   const [err, setErr] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate()
   // console.log(window.location.assign(window.location.hostname + "/"));
-
+  const { setJwt } = useContext(AuthContext);
   function errorHandler(statusCode) {
     switch (statusCode) {
       case 400:
@@ -37,7 +40,11 @@ function Login({ loginScreen, setLoginScreen }) {
       return errorHandler(respond.status)
     }
     const jwt = (await respond.json()).jwt
+    console.log(jwt);
+    setJwt(jwt)
+    navigate("/collections")
   }
+
   return (
     <div className=" relative -translate-x-1/2 items-center flex-col">
       <div className=" flex items-center flex-col w-fit">

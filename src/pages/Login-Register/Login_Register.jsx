@@ -1,4 +1,3 @@
-import { isPropertyAccessOrQualifiedName } from "typescript";
 import HangUpSing from "../../components/hangUpSing"
 import BackShadow from "./BackShadow"
 import Login from "./Login"
@@ -19,7 +18,7 @@ function Login_Register() {
   }, []);
   
   return (
-    <div className="bg-repeat relative overflow-hidden bg-[10px] h-screen bgDirtImg z-50">
+    <div className="bg-repeat relative overflow-x-hidden bg-[10px] h-screen bgDirtImg z-40">
       <BackShadow />
       <HangUpSing
         text="Minecraft note app"

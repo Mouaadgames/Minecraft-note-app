@@ -1,13 +1,12 @@
 import { useId, useState, useEffect, useRef } from "react"
 
-function InputField({ validationRegex, className, setIsValid, tabIndex,  hasALabel, label, type, name, setInputValue }) {
+function InputField({ validationRegex, initValue = "", className, setIsValid, tabIndex, hasALabel, label, type, name, setInputValue }) {
   const id = useId() // use useId here to get specific id
-  const [inputV, setInput] = useState("");
+  const [inputV, setInput] = useState(initValue);
   const validationColor = useRef(false)
   useEffect(() => {
-    if (setInputValue) {
-      setInputValue(inputV)
-    }
+    console.log(inputV);
+    setInputValue && setInputValue(inputV)
   }, [inputV]);
 
   useEffect(() => {
@@ -29,12 +28,12 @@ function InputField({ validationRegex, className, setIsValid, tabIndex,  hasALab
 
 
   return (
-    <div className={" z-10 " + " " + className}>
+    <div className={" z-10 text-2xl " + " " + className}>
       <div>
         {
-          hasALabel && (<><label style={{ color: validationColor.current }} className="text-2xl" htmlFor={id}>{label}</label> <br /></>)
+          hasALabel && (<><label style={{ color: validationColor.current }} className="" htmlFor={id}>{label}</label> <br /></>)
         }
-        <input tabIndex={tabIndex} onChange={(e) => setInput(e.target.value)} value={inputV} type={type} name={name} id={id} className="text-white bg-black text-2xl border-neutral-500 border-solid border-4 px-1 w-full" />
+        <input tabIndex={tabIndex} onChange={(e) => setInput(e.target.value)} value={inputV} type={type} name={name} id={id} className="text-white bg-black  border-neutral-500 border-solid border-4 px-1 w-full" />
       </div>
     </div>
   )

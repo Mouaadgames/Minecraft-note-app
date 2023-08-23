@@ -3,10 +3,13 @@ import OrSeparator from "./OrSeparator"
 import RegisterForm from "./RegisterForm";
 import sendFormDataTo from "../../utils/formData";
 import { useState } from "react";
+import { redirect } from "react-router-dom"
+
 function Register({ setLoginScreen, loginScreen }) {
 
   const [err, setErr] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
   function errorHandler(statusCode) {
     switch (statusCode) {
       case 400:
@@ -32,10 +35,13 @@ function Register({ setLoginScreen, loginScreen }) {
       setSubmitting(false)
       return errorHandler(respond.status)
     }
-    console.log(await respond.json())
+    const jwt = (await respond.json()).jwt
+    console.log(jwt);
+    setJwt(jwt)
+    redirect("/collections")  
   }
   return (
-    <div className="relative translate-x-1/2 flex items-center flex-col" >
+    <div className="relative translate-x-1/2 flex items-center flex-col min-w-[250px]" >
       <div className=" flex items-center flex-col w-fit">
         <h2 className="text-5xl mt-5 mb-3">Sing Up</h2>
         <RegisterForm isSubmitting={submitting} setErr={setErr} err={err} onSubmitHandler={registerHandler} loginScreen={loginScreen} />
