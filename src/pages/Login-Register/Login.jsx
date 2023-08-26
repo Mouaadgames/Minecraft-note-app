@@ -2,16 +2,19 @@ import Button from "../../components/Button"
 import OrSeparator from "./OrSeparator"
 import LoginForm from "./LoginForm"
 import sendFormDataTo from "../../utils/formData";
-import { useState, useContext } from "react";
+import { useState, useContext,useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom"
+import useLocalStorage from "../../hooks/useLocalStorage";
 
 function Login({ loginScreen, setLoginScreen }) {
+  const [_,setJwtToLocalStorage] = useLocalStorage("jwtToken")
   const [err, setErr] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate()
   // console.log(window.location.assign(window.location.hostname + "/"));
   const { setJwt } = useContext(AuthContext);
+
   function errorHandler(statusCode) {
     switch (statusCode) {
       case 400:
@@ -42,6 +45,7 @@ function Login({ loginScreen, setLoginScreen }) {
     const jwt = (await respond.json()).jwt
     console.log(jwt);
     setJwt(jwt)
+    setJwtToLocalStorage(jwt)
     navigate("/collections")
   }
 
@@ -52,7 +56,7 @@ function Login({ loginScreen, setLoginScreen }) {
         <LoginForm isSubmitting={submitting} err={err} setErr={setErr} loginScreen={loginScreen} onSubmitHandler={LoginSubmitHandler} />
         <span className="text-neutral-400 ">You don't have an account? <button tabIndex={-!loginScreen} className="text-neutral-200 hover:text-neutral-50 underline-offset-2 underline cursor-pointer" onClick={() => { window.history.pushState("", "", "/register"); setLoginScreen(false) }}>Create One</button> </span>
         <OrSeparator />
-        <Button onClick={(e) => { fetch("http://localhost:3000/") }} tabIndex={-!loginScreen} text="Use it as a Guest" />
+        <Button onClick={(e) => { setJwt("just a guest"); navigate("/collections") }} tabIndex={-!loginScreen} text="Use it as a Guest" />
         <span className="text-neutral-400 leading-none mt-1 max-w-[250px] text-center">You will go to a pre-configured environment to discover and play around with the app</span>
       </div>
     </div>)

@@ -3,14 +3,47 @@
 @tailwind utilities;
 
 
-*{
+* {
   font-family: 'VT323', monospace;
 }
 
-.bgDirtImg{
+.bgDirtImg {
   background-image: url("./assets/img/bg/dirt.png");
 }
 
-.bgWoodImg{
+.bgWoodImg {
   background-image: url("./assets/img/bg/wood.jpg");
+}
+
+.bgStoneImg {
+  background-image: url("./assets/img/bg/marble.jpg");
+  background-size: 150px;
+
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border: 18px solid transparent;
+  border-bottom: 0;
+  border-top: 25px solid white;
+}
+
+#scrollBar::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+#scrollBar::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+#scrollBar::-webkit-scrollbar-thumb
+{
+  background-color: #000000;
+	border: 2px solid #555555;
+  
 }

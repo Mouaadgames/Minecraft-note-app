@@ -1,8 +1,9 @@
-import { createContext, useState } from "react"
+import { createContext, useState, useEffect } from "react"
 export const AuthContext = createContext();
-
+import useLocalStorage from "../hooks/useLocalStorage";
 function AuthContextProvider(props) {
-  const [jwt, setJwt] = useState("");
+  const [getJwtToLocalStorage] = useLocalStorage("jwtToken")
+  const [jwt, setJwt] = useState(getJwtToLocalStorage());
   return (
     <AuthContext.Provider value={{ jwt, setJwt }}>
       {props.children}

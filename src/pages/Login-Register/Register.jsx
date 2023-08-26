@@ -2,13 +2,24 @@ import Button from "../../components/Button"
 import OrSeparator from "./OrSeparator"
 import RegisterForm from "./RegisterForm";
 import sendFormDataTo from "../../utils/formData";
-import { useState } from "react";
-import { redirect } from "react-router-dom"
+import { useState, useContext,useEffect } from "react";
+import { useNavigate } from "react-router-dom"
+import { AuthContext } from "../../context/AuthContext";
+import useLocalStorage from "../../hooks/useLocalStorage";
 
 function Register({ setLoginScreen, loginScreen }) {
 
   const [err, setErr] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const {setJwt} = useContext(AuthContext)
+  const [getJwtToLocalStorage,setJwtToLocalStorage] = useLocalStorage("jwtToken")
+  const navigate = useNavigate()
+
+  useEffect(() => {  
+    if (getJwtToLocalStorage() != "") {
+      setJwt(getJwtToLocalStorage())
+    }
+  }, []);
 
   function errorHandler(statusCode) {
     switch (statusCode) {
@@ -38,7 +49,8 @@ function Register({ setLoginScreen, loginScreen }) {
     const jwt = (await respond.json()).jwt
     console.log(jwt);
     setJwt(jwt)
-    redirect("/collections")  
+    setJwtToLocalStorage(jwt)
+    navigate("/collections")  
   }
   return (
     <div className="relative translate-x-1/2 flex items-center flex-col min-w-[250px]" >
@@ -47,7 +59,7 @@ function Register({ setLoginScreen, loginScreen }) {
         <RegisterForm isSubmitting={submitting} setErr={setErr} err={err} onSubmitHandler={registerHandler} loginScreen={loginScreen} />
         <span className="text-neutral-400 ">I already have an account - <button tabIndex={-!!loginScreen} onClick={() => { window.history.pushState("", "", "/login"); setLoginScreen(true) }} className="text-neutral-200 hover:text-neutral-50 underline-offset-2 underline">Login</button> </span>
         <OrSeparator />
-        <Button tabIndex={-!!loginScreen} text="Use it as a Guest" />
+        <Button onClick={(e) => { setJwt("just a guest"); navigate("/collections") }} tabIndex={-!!loginScreen} text="Use it as a Guest" />
         <span className="text-neutral-400 leading-none mt-1 max-w-[250px] text-center">You will go to a pre-configured environment to discover and play around with the app</span>
       </div>
     </div >

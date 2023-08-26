@@ -5,10 +5,11 @@ import InputField from "../../components/InputField"
 import RadioButton from "../../components/RadioButton"
 import Button from "../../components/Button"
 import { useState, useEffect } from 'react'
-import { editCollection } from "../../utils/APICommunication"
+import { editCollection, AddCollection } from "../../utils/APICommunication"
 import { useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
-function ModalBody({ closeModel, editMode }) {
+function ModalBody({ closeModel, editMode, refetchFn }) {
+  const { jwt } = useContext(AuthContext);
 
   const [titleInput, setTitleInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
@@ -34,10 +35,11 @@ function ModalBody({ closeModel, editMode }) {
     if (editMode().isActive) {
       setTitleInput(editMode().collection.name)
       setDescriptionInput(editMode().collection.description)
-      setIsShared(editMode().collection.globalWriteAccess !== null)
-      if (editMode().collection.globalWriteAccess !== null) {
+      setIsShared(editMode().collection.globalWriteAccess !== null && editMode().collection.sharedWith.length)
+      if (editMode().collection.globalWriteAccess !== null && editMode().collection.sharedWith.length) {
         setRadioButtonValue(editMode().collection.globalWriteAccess + 1)
-        setUsernamesInput(editMode().collection.sharedWith.reduce((pv, cv) => `${pv},${cv}`, ""))
+        console.log(editMode().collection);
+        setUsernamesInput(editMode().collection.sharedWith.reduce((pv, cv) => { return pv ? `${pv},${cv}` : cv }, ""))
       }
     }
   }, [editMode()]);
@@ -66,14 +68,20 @@ function ModalBody({ closeModel, editMode }) {
             }
             <div className="flex justify-center mt-4">
               <Button disable={!(titleInputValidation && (!isShared || radioButtonsValidation && usernamesInputValidation))}
-                onClick={() => AddCollection(
-                  {
+                onClick={() => {
+                  const collectionData = {
                     radioButton: radioButtonValue,
                     isShared,
                     usernames: usernamesInput,
                     description: descriptionInput,
                     title: titleInput
-                  })}
+                  }
+                  editMode().isActive ?
+                    editCollection(jwt, { id: editMode().collection.id, ...collectionData }, refetchFn) :
+                    AddCollection(jwt, collectionData, refetchFn)
+                  closeModel()
+                }
+                }
                 text={"Done"} />
             </div>
           </div>

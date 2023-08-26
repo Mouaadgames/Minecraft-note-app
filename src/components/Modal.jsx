@@ -7,14 +7,15 @@ function Modal(props, ref) {
     return {
       openModal() {
         setModelIsOpen(true)
-        setEditMode({ isActive: false  })
+        setEditMode({ isActive: false })
       },
       openInEditMode(collection) {
         setModelIsOpen(true)
-        setEditMode({ isActive: true, collection })
+        setEditMode({ isActive: true, collection: collection.collection })
       },
       closeModal() {
         setModelIsOpen(false)
+        props.refetchData()
       },
       editMode
     }

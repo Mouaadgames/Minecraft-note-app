@@ -6,27 +6,44 @@ import { useState, useRef, useEffect, useContext } from "react"
 import { getCollections } from "../../utils/APICommunication"
 import { useQuery } from "react-query"
 import { AuthContext } from "../../context/AuthContext"
+import useLocalStorage from "../../hooks/useLocalStorage"
+import { useNavigate } from "react-router-dom"
 
 function UserCollections() {
   const [search, setSearch] = useState("");
   const modalRef = useRef()
-  const { jwt } = useContext(AuthContext);
-  const { data, isLoading, error } = useQuery("getUserCollections", () => getCollections(jwt), {
+  const navigate = useNavigate()
+  const { jwt, setJwt } = useContext(AuthContext);
+  const [getJwt, setIt] = useLocalStorage("jwtToken")
+
+  const { data, isLoading, error, refetch } = useQuery("getUserCollections", () => getCollections(jwt ? jwt : getJwt()), {
     staleTime: 30 * 60 * 1000
   })
   const [collections, setCollections] = useState([])
-
+  useEffect(() => {
+    if (!jwt) {
+      if (getJwt()) {
+        setJwt(getJwt())
+      }
+      else {
+        navigate("/login")
+      }
+    }
+  }, []);
+  useEffect(() => {
+    refetch()
+  }, [jwt]);
   useEffect(() => {
     if (data) {
-      setCollections([...data?.user?.collectionOwned, ...data?.user?.collectionShared])
+      setCollections([...(data?.user?.collectionOwned.reverse()), ...data?.user?.collectionShared.reverse()])
     }
   }, [data]);
 
 
   return (
     <div className="bg-repeat bgWoodImg flex flex-col h-screen">
-      <Modal ref={modalRef}>
-        <ModalBody closeModel={() => modalRef.current.closeModal()} editMode={() => modalRef.current.editMode} />
+      <Modal refetchData={refetch} ref={modalRef}>
+        <ModalBody refetchFn={refetch} closeModel={() => modalRef.current.closeModal()} editMode={() => modalRef.current.editMode} />
       </Modal>
       <ControlBar openModal={() => modalRef.current.openModal()} setSearch={setSearch} />
       {
