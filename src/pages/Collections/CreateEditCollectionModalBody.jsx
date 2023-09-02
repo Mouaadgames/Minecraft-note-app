@@ -4,11 +4,10 @@ import CheckBoxButton from "../../components/CheckBoxButton"
 import InputField from "../../components/InputField"
 import RadioButton from "../../components/RadioButton"
 import Button from "../../components/Button"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { editCollection, AddCollection } from "../../utils/APICommunication"
-import { useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
-function ModalBody({ closeModel, editMode, refetchFn }) {
+function ModalBody({ closeModel, editMode }) {
   const { jwt } = useContext(AuthContext);
 
   const [titleInput, setTitleInput] = useState("");
@@ -21,6 +20,7 @@ function ModalBody({ closeModel, editMode, refetchFn }) {
   const [titleInputValidation, setTitleInputValidation] = useState(false);
   const [radioButtonsValidation, setRadioButtonsValidation] = useState(false);
 
+  const [disableButton, setDisableButton] = useState(false);
   useEffect(() => {
     setRadioButtonsValidation(radioButtonValue == 1 || radioButtonValue == 2)
   }, [radioButtonValue]);
@@ -67,8 +67,9 @@ function ModalBody({ closeModel, editMode, refetchFn }) {
                 </>) : ""
             }
             <div className="flex justify-center mt-4">
-              <Button disable={!(titleInputValidation && (!isShared || radioButtonsValidation && usernamesInputValidation))}
-                onClick={() => {
+              <Button disable={disableButton || !(titleInputValidation && (!isShared || radioButtonsValidation && usernamesInputValidation))}
+                onClick={async () => {
+                  setDisableButton(true)
                   const collectionData = {
                     radioButton: radioButtonValue,
                     isShared,
@@ -76,10 +77,13 @@ function ModalBody({ closeModel, editMode, refetchFn }) {
                     description: descriptionInput,
                     title: titleInput
                   }
-                  editMode().isActive ?
-                    editCollection(jwt, { id: editMode().collection.id, ...collectionData }, refetchFn) :
-                    AddCollection(jwt, collectionData, refetchFn)
-                  closeModel()
+                  if (editMode().isActive ?
+                    await editCollection(jwt, { id: editMode().collection.id, ...collectionData }) :
+                    await AddCollection(jwt, collectionData)) {
+                    setDisableButton(false)
+                    closeModel()
+                  }
+                  setDisableButton(false)
                 }
                 }
                 text={"Done"} />

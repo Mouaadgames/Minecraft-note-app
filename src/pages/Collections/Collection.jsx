@@ -20,7 +20,7 @@ function Collection({ collectionData, onClick, openEditCollection }) {
         </div>
       </Link>
       <span className="flex-1"></span>
-      <div onClick={async () => openEditCollection(await getCollectionInfo(jwt, collectionData.id))} className="relative self-start top-0 right-0 border-white border-solid border-2 pt-1 pl-[6px] aspect-square w-8 h-8 rounded-full cursor-pointer hover:bg-[#FFF7] ">🖍</div>
+      <div onClick={() => openEditCollection(jwt, collectionData.id)} className="relative self-start top-0 right-0 border-white border-solid border-2 pt-1 pl-[6px] aspect-square w-8 h-8 rounded-full cursor-pointer hover:bg-[#FFF7] ">🖍</div>
     </div>
   )
 }
