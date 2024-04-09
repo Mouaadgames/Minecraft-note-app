@@ -1,6 +1,7 @@
 import axios from "axios";
 const URL = "http://localhost:3000/graphql"
 //add security checking
+// add try catch blocks
 // collection manipulation
 export async function getCollections(jwt) {
   const query = `#graphql
@@ -69,14 +70,16 @@ export async function GetBookshelfInfo(jwt, bookshelfId) {
         isHidden
         icon
         title
+        numberOfPages 
       }
     }
   }
   `
 
-  return (await axios.post(URL, { jwt, query })).data.data.bookshelf 
+  return (await axios.post(URL, { jwt, query })).data.data?.bookshelf
 }
 
+//add mutation
 export async function AddCollection(jwt, collectionData = { radioButton: "", isShared: false, usernames: "", description: "", title: "" }) {
   const query = `
   mutation addCollection{
@@ -84,10 +87,20 @@ export async function AddCollection(jwt, collectionData = { radioButton: "", isS
   }`
   console.log("try to add")
 
-  return (await axios.post(URL, { jwt, query, operationName: "addCollection" })).data.data.addCollection
+  return (await axios.post(URL, { jwt, query, operationName: "addCollection" })).data.data?.addCollection
 
 }
 
+export async function AddABook(jwt, book = { bookshelfId, title, icon }) {
+  const query = `
+  mutation addABook{
+    addBook(bookshelfId:"${book.bookshelfId}",title:"${book.title}",icon:${book.icon}) 
+  }`
+  return (await axios.post(URL, { jwt, query, operationName: "addABook" })).data.data?.addBook
+
+}
+
+//edit mutation
 export async function editCollection(jwt, collectionData = { id, radioButton, isShared, usernames, description, title }, refetchFn) {
   console.log("edit req", collectionData); // wyh this is undefined
   const query = `
@@ -104,6 +117,15 @@ export async function editCollection(jwt, collectionData = { id, radioButton, is
   }`
   return (await axios.post(URL, { jwt, query, operationName: "editCollection" })).data.data?.editCollection;
 
+}
+
+export async function EditBookshelfName(jwt, bookshelf) {
+  const query = `
+  mutation bookshelfInfo{
+    editBookshelf(bookshelfId:"${bookshelf.id}",name:"${bookshelf.name}")
+  }`
+
+  return (await axios.post(URL, { jwt, query, operationName: "bookshelfInfo" })).data.data?.editBookshelfInfo
 }
 
 

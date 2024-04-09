@@ -3,11 +3,12 @@ import { getCollection } from "../../utils/APICommunication"
 import { useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import { useQuery } from "react-query";
-import HangUpSing from "../../components/HangUpSing";
+import HangUpSing from "../../components/hangUpSing";
 import { useEffect, useState } from "react";
 import BookShelf from "./BookShelf";
 import TopBookshelfBar from "./TopBookshelfBar";
 import BooksUI from "./BooksUI";
+import { EditBookshelfName } from "../../utils/APICommunication";
 function CollectionInterface() {
   /**TODO :
    * show books in a pretty way
@@ -29,8 +30,9 @@ function CollectionInterface() {
   useEffect(() => {
     refetch()
   }, []);
-  function selectBookshelf(bookshelfObj) {
-    setCurrentBookshelf(bookshelfObj)
+  async function editBSTitle(bookshelfTitle) {
+    await EditBookshelfName(jwt, { id: currentBookshelf.id, name: bookshelfTitle })
+    refetch()
   }
   return (
 
@@ -46,7 +48,8 @@ function CollectionInterface() {
                     <div className="grid grid-cols-2 gap-4 py-4 md:px-11">
                       {
                         data.collection.bookshelves.map((elem, i) => {
-                          return (<div key={i}><BookShelf onSelected={selectBookshelf} bookshelfElement={elem} /></div>)
+                          console.log("rerenderd", data.collection.bookshelves[i].name);
+                          return (<div key={i}><BookShelf onSelected={setCurrentBookshelf} bookshelfElement={elem} /></div>)
                         })
                       }
                     </div>
@@ -59,7 +62,10 @@ function CollectionInterface() {
               {
                 currentBookshelf && (
                   <>
-                    <TopBookshelfBar bookshelfObj={currentBookshelf} />
+                    <TopBookshelfBar bookshelfObj={currentBookshelf} saveEditedBSTitle={editBSTitle} />
+                    <br />
+                    <hr className="border-neutral-500 border-2" />
+                    <br />
                     <BooksUI bookshelfElem={currentBookshelf} />
                   </>)
               }

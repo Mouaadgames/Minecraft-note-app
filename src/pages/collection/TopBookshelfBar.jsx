@@ -4,20 +4,34 @@ import Button from "../../components/Button"
 import calculateHeight from "../../utils/getTANumberOfLines";
 
 
-function TopBookshelfBar({ bookshelfObj }) {
+function TopBookshelfBar({ bookshelfObj, saveEditedBSTitle }) {
   const [titleState, setTitleState] = useState("")
   const [rowsState, setRowsState] = useState(1);
   const textAreaRef = useRef(null)
   const oldBookshelf = useRef(null)
 
+  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const timeoutRef = useRef(null)
   useLayoutEffect(() => {
     setTitleState(bookshelfObj.name)
     oldBookshelf.current = bookshelfObj
   }, [bookshelfObj]);
-  
+
   useLayoutEffect(() => {
     setRowsState(calculateHeight(textAreaRef.current))
   }, [titleState])
+
+  useEffect(() => {
+    if (error) {
+      timeoutRef.current = setTimeout(() => {
+        setError("")
+      }, 3000);
+    }
+    return () => {
+      clearTimeout(timeoutRef.current)
+    };
+  }, [error]);
 
 
   return (
@@ -36,8 +50,9 @@ function TopBookshelfBar({ bookshelfObj }) {
         </textarea>
       </div>
       <div className="flex flex-col justify-around">
-        {/* is deffrent than the stored prev object  */}
-        <Button disable={titleState === bookshelfObj.name} onClick={() =>   { }} text={"Save"} />
+        {/* is difference than the stored prev object  */}
+        {/* refetch the validate data and outside and try to disable save button */}
+        <Button disable={titleState === oldBookshelf.current?.name || isLoading || error} className={isLoading ? "text-green-500" : error ? "text-red-500" : ""} onClick={async () => { setIsLoading(true); await saveEditedBSTitle(titleState) ? bookshelfObj = { ...bookshelfObj, name: titleState } : ""; setIsLoading(false) }} text={isLoading ? "saving..." : false || error ? "something went wrong" : false || "Save"} />
         <Button disable={bookshelfObj.numberOfBooks === 8} onClick={() => { }} text={"Add book"} />
       </div>
     </section>

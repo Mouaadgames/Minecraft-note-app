@@ -1,4 +1,4 @@
-import HangUpSign from "../../components/HangUpSing"
+import HangUpSign from "../../components/hangUpSing"
 import TextArea from "../../components/TextArea"
 import CheckBoxButton from "../../components/CheckBoxButton"
 import InputField from "../../components/InputField"
